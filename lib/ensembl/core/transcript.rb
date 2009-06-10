@@ -45,7 +45,12 @@ module Ensembl
         rank_2 = ExonTranscript.find_by_transcript_id_and_exon_id(transcript.id, exon_2.id).rank
         raise ArgumentError, "Arguments should be adjacent exons of same transcript" if (rank_2 - rank_1).abs > 1
         
-        @previous_exon, @next_exon = [exon_1, exon_2].sort_by{|e| e.seq_region_start}
+        if strand==1
+                @previous_exon, @next_exon = [exon_1, exon_2].sort_by{|e| e.seq_region_start}
+        else
+                @previous_exon, @next_exon = [exon_1, exon_2].sort_by{|e| e.seq_region_start}.reverse
+        end
+
         @transcript = transcript
         @seq_region = @previous_exon.seq_region
         @seq_region_start = @previous_exon.seq_region_end + 1
