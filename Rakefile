@@ -18,7 +18,7 @@ task :rebuild_gemspec do
   
   
   outfile.puts '  s.files = ["' + FileList.new("bin/*", "lib/**/*.rb", "samples/**/*", "test/**/*.rb", "doc/**/*.html").join("\",\"") + '"]'
-  outfile.puts '  s.extra_rdoc_files = ["TUTORIAL"]'
+  outfile.puts '  s.extra_rdoc_files = ["TUTORIAL.rdoc"]'
   outfile.puts ''
   outfile.puts '  s.test_files = ["' + FileList.new("test/**/test_*.rb").join("\",\"") + '"]'
   outfile.puts ''
