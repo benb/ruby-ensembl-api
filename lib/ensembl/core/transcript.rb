@@ -19,9 +19,10 @@ module Ensembl
     # class. See Sliceable and Slice for more information.
     # 
     # = USAGE
-    #  exon1 = Ensembl::Core::Exon.find(292811)
-    #  exon2 = Ensembl::Core::Exon.find(292894)
-    #  intron = Ensembl::Core::Intron.new(exon1,exon2)
+    #  transcript = Ensembl::Core::Transcript.find(58972)
+    #  exon1=transcript.exons[0]
+    #  exon2=transcript.exons[1]
+    #  intron = Ensembl::Core::Intron.new(exon1,exon2,transcript)
     #  puts intron.to_yaml
     #  
     #  transcript = Ensembl::Core::Transcript.find(58972)
@@ -31,16 +32,10 @@ module Ensembl
       attr_accessor :seq_region, :seq_region_start, :seq_region_end, :seq_region_strand
       attr_accessor :previous_exon, :next_exon, :transcript
       
-      def initialize(exon_1, exon_2)
+      def initialize(exon_1, exon_2, transcript)
         # Check if these are actually two adjacent exons from the same transcript
-        ok = true
 
-        transcript = nil
-        exon_1.transcripts.each do |t|
-          transcript = t if exon_2.transcripts.include?(t)
-        end
         raise ArgumentError, "Arguments should be adjacent exons of same transcript" if transcript.nil?
-        
         rank_1 = ExonTranscript.find_by_transcript_id_and_exon_id(transcript.id, exon_1.id).rank
         rank_2 = ExonTranscript.find_by_transcript_id_and_exon_id(transcript.id, exon_2.id).rank
         raise ArgumentError, "Arguments should be adjacent exons of same transcript" if (rank_2 - rank_1).abs > 1
@@ -122,7 +117,7 @@ module Ensembl
           if self.exons.length > 1
             self.exons.each_with_index do |exon, index|
               next if index == 0
-              @introns.push(Intron.new(self.exons[index - 1], exon))
+              @introns.push(Intron.new(self.exons[index - 1], exon,self))
             end
           end
         end
